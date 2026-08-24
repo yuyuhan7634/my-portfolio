@@ -283,6 +283,130 @@
         .fill-pink   { background: linear-gradient(90deg, #f472b6, #db2777); box-shadow: 0 0 12px rgba(244,114,182,0.4); }
         .fill-teal   { background: linear-gradient(90deg, #5eead4, #0d9488); box-shadow: 0 0 12px rgba(94,234,212,0.4); }
 
+        /* 留言表单 */
+        .message-form {
+            margin-top: 0;
+        }
+
+        .form-wrapper {
+            background: #23262d;
+            border: 1px solid rgba(77, 184, 255, 0.12);
+            border-radius: 12px;
+            padding: 28px;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label .required {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: #1a1d24;
+            border: 1px solid rgba(77, 184, 255, 0.18);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #e5e7eb;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #6b7280;
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(77, 184, 255, 0.35);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: #4db8ff;
+            box-shadow: 0 0 0 3px rgba(77, 184, 255, 0.15);
+            background: #1f232b;
+        }
+
+        .form-input {
+            min-height: 44px;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #4db8ff 0%, #007aff 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(77, 184, 255, 0.3);
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(77, 184, 255, 0.45);
+            filter: brightness(1.08);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(77, 184, 255, 0.35);
+        }
+
+        .submit-btn svg {
+            flex-shrink: 0;
+        }
+
+        .form-tip {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 12px;
+            text-align: right;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .profile-main {
@@ -390,6 +514,23 @@
                 font-size: 13px;
                 width: 100%;
                 justify-content: center;
+            }
+
+            .form-wrapper {
+                padding: 20px;
+            }
+
+            .form-footer {
+                justify-content: center;
+            }
+
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-tip {
+                text-align: center;
             }
         }
 
@@ -550,6 +691,39 @@
                         北京市 · 海淀区
                     </a>
                 </div>
+            </div>
+
+            <!-- 分隔线 -->
+            <div class="divider"></div>
+
+            <!-- 给我留言表单 -->
+            <div class="message-form">
+                <div class="section-title">给我留言</div>
+                <form class="form-wrapper" onsubmit="event.preventDefault(); alert('留言已提交，感谢您的反馈！'); this.reset();">
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            姓名
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="请输入您的姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            消息内容
+                            <span class="required">*</span>
+                        </label>
+                        <textarea id="message" name="message" class="form-textarea" placeholder="请留言，我会尽快回复您……" rows="5" required></textarea>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="submit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            提交留言
+                        </button>
+                    </div>
+                    <p class="form-tip">* 您的信息仅用于本次留言回复，不会对外公开</p>
+                </form>
             </div>
         </div>
     </div>

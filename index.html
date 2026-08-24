@@ -13,11 +13,96 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: #0f1115;
-            color: #e5e7eb;
+            background: var(--bg-body);
+            color: var(--text-main);
             line-height: 1.6;
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.35s ease, color 0.35s ease;
+        }
+
+        /* 暗/亮色主题变量 */
+        :root {
+            --bg-body: #0f1115;
+            --bg-card: #1a1d24;
+            --bg-elevated: #23262d;
+            --bg-input: #1a1d24;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-title: #f3f4f6;
+            --text-placeholder: #6b7280;
+            --accent: #4db8ff;
+            --accent-rgb: 77, 184, 255;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --card-hover-shadow: 0 8px 32px rgba(77, 184, 255, 0.18);
+            --card-border: rgba(77, 184, 255, 0.15);
+            --input-border: rgba(77, 184, 255, 0.18);
+        }
+
+        body.light-mode {
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-elevated: #f9fafb;
+            --bg-input: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-title: #111827;
+            --text-placeholder: #9ca3af;
+            --accent: #007aff;
+            --accent-rgb: 0, 122, 255;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: 0 8px 32px rgba(0, 122, 255, 0.15);
+            --card-border: rgba(0, 122, 255, 0.12);
+            --input-border: rgba(0, 122, 255, 0.18);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 999;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--card-border);
+            background: var(--bg-card);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.3);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle .icon {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+
+        .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        body.light-mode .theme-toggle .icon-sun {
+            display: inline-flex;
+        }
+
+        body.light-mode .theme-toggle .icon-moon {
+            display: none;
         }
 
         .container {
@@ -27,17 +112,17 @@
         }
 
         .card {
-            background: #1a1d24;
+            background: var(--bg-card);
             border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--card-shadow);
             padding: 48px 40px;
-            border: 1px solid rgba(77, 184, 255, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.35s ease, border-color 0.35s ease;
         }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(77, 184, 255, 0.18);
+            box-shadow: var(--card-hover-shadow);
         }
 
         .profile-main {
@@ -67,61 +152,67 @@
             height: 160px;
             margin: 0 auto 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4db8ff 0%, #007aff 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, #007aff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
             font-size: 60px;
             font-weight: 600;
-            box-shadow: 0 4px 20px rgba(77, 184, 255, 0.35);
-            border: 3px solid #4db8ff;
-            outline: 1px solid rgba(77, 184, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.35);
+            border: 3px solid var(--accent);
+            outline: 1px solid rgba(var(--accent-rgb), 0.4);
             outline-offset: 4px;
+            transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, outline-color 0.35s ease;
         }
 
         .name {
             font-size: 28px;
             font-weight: 700;
-            color: #f3f4f6;
+            color: var(--text-title);
             margin-bottom: 6px;
             letter-spacing: 1px;
+            transition: color 0.35s ease;
         }
 
         .title {
             font-size: 15px;
-            color: #4db8ff;
+            color: var(--accent);
             font-weight: 500;
             margin-bottom: 0;
+            transition: color 0.35s ease;
         }
 
         .bio {
             font-size: 15px;
-            color: #9ca3af;
+            color: var(--text-muted);
             line-height: 1.8;
             margin-bottom: 32px;
             text-align: left;
+            transition: color 0.35s ease;
         }
 
         .section-title {
             font-size: 18px;
             font-weight: 600;
-            color: #f3f4f6;
+            color: var(--text-title);
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
             gap: 8px;
             text-align: left;
+            transition: color 0.35s ease;
         }
 
         .section-title::before {
             content: '';
             width: 24px;
             height: 2px;
-            background: #4db8ff;
+            background: var(--accent);
             border-radius: 2px;
             flex-shrink: 0;
+            transition: background 0.35s ease;
         }
 
         .section-title::after {
@@ -141,21 +232,21 @@
 
         .skill-tag {
             padding: 8px 20px;
-            background: rgba(77, 184, 255, 0.1);
-            color: #4db8ff;
+            background: rgba(var(--accent-rgb), 0.1);
+            color: var(--accent);
             border-radius: 20px;
             font-size: 14px;
             font-weight: 500;
-            border: 1px solid rgba(77, 184, 255, 0.2);
+            border: 1px solid rgba(var(--accent-rgb), 0.2);
             transition: all 0.2s ease;
             cursor: default;
         }
 
         .skill-tag:hover {
-            background: #4db8ff;
-            color: #0f1115;
+            background: var(--accent);
+            color: var(--bg-body);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(77, 184, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
         }
 
         .contact {
@@ -175,19 +266,19 @@
             align-items: center;
             gap: 10px;
             padding: 12px 20px;
-            background: #23262d;
+            background: var(--bg-elevated);
             border-radius: 10px;
             font-size: 14px;
-            color: #d1d5db;
+            color: var(--text-main);
             text-decoration: none;
             transition: all 0.2s ease;
-            border: 1px solid rgba(77, 184, 255, 0.08);
+            border: 1px solid rgba(var(--accent-rgb), 0.08);
         }
 
         .contact-item:hover {
-            background: rgba(77, 184, 255, 0.12);
-            border-color: rgba(77, 184, 255, 0.3);
-            color: #4db8ff;
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.3);
+            color: var(--accent);
         }
 
         .contact-icon {
@@ -201,9 +292,10 @@
         .divider {
             width: 60px;
             height: 3px;
-            background: linear-gradient(90deg, #4db8ff 0%, #007aff 100%);
+            background: linear-gradient(90deg, var(--accent) 0%, #007aff 100%);
             margin: 40px 0 32px 0;
             border-radius: 2px;
+            transition: background 0.35s ease;
         }
 
         /* 技能进度条 */
@@ -232,23 +324,26 @@
         .progress-name {
             font-size: 14px;
             font-weight: 500;
-            color: #d1d5db;
+            color: var(--text-main);
+            transition: color 0.35s ease;
         }
 
         .progress-percent {
             font-size: 13px;
             font-weight: 600;
-            color: #9ca3af;
+            color: var(--text-muted);
             font-variant-numeric: tabular-nums;
+            transition: color 0.35s ease;
         }
 
         .progress-bar {
             width: 100%;
             height: 10px;
-            background: #23262d;
+            background: var(--bg-elevated);
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+            transition: background 0.35s ease;
         }
 
         .progress-fill {
@@ -276,7 +371,7 @@
             100% { transform: translateX(100%); }
         }
 
-        .fill-blue   { background: linear-gradient(90deg, #4db8ff, #007aff); box-shadow: 0 0 12px rgba(77,184,255,0.4); }
+        .fill-blue   { background: linear-gradient(90deg, var(--accent), #007aff); box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.4); }
         .fill-green  { background: linear-gradient(90deg, #34d399, #059669); box-shadow: 0 0 12px rgba(52,211,153,0.4); }
         .fill-purple { background: linear-gradient(90deg, #c084fc, #7c3aed); box-shadow: 0 0 12px rgba(192,132,252,0.4); }
         .fill-orange { background: linear-gradient(90deg, #fbbf24, #f97316); box-shadow: 0 0 12px rgba(251,191,36,0.4); }
@@ -289,11 +384,12 @@
         }
 
         .form-wrapper {
-            background: #23262d;
-            border: 1px solid rgba(77, 184, 255, 0.12);
+            background: var(--bg-elevated);
+            border: 1px solid rgba(var(--accent-rgb), 0.12);
             border-radius: 12px;
             padding: 28px;
             margin-top: 4px;
+            transition: background 0.35s ease, border-color 0.35s ease;
         }
 
         .form-group {
@@ -310,10 +406,11 @@
         .form-label {
             font-size: 14px;
             font-weight: 500;
-            color: #d1d5db;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: color 0.35s ease;
         }
 
         .form-label .required {
@@ -324,12 +421,12 @@
         .form-input,
         .form-textarea {
             width: 100%;
-            background: #1a1d24;
-            border: 1px solid rgba(77, 184, 255, 0.18);
+            background: var(--bg-input);
+            border: 1px solid var(--input-border);
             border-radius: 10px;
             padding: 12px 16px;
             font-size: 14px;
-            color: #e5e7eb;
+            color: var(--text-main);
             font-family: inherit;
             transition: all 0.2s ease;
             outline: none;
@@ -337,19 +434,19 @@
 
         .form-input::placeholder,
         .form-textarea::placeholder {
-            color: #6b7280;
+            color: var(--text-placeholder);
         }
 
         .form-input:hover,
         .form-textarea:hover {
-            border-color: rgba(77, 184, 255, 0.35);
+            border-color: rgba(var(--accent-rgb), 0.35);
         }
 
         .form-input:focus,
         .form-textarea:focus {
-            border-color: #4db8ff;
-            box-shadow: 0 0 0 3px rgba(77, 184, 255, 0.15);
-            background: #1f232b;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+            background: var(--bg-elevated);
         }
 
         .form-input {
@@ -372,7 +469,7 @@
             align-items: center;
             gap: 8px;
             padding: 12px 28px;
-            background: linear-gradient(135deg, #4db8ff 0%, #007aff 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, #007aff 100%);
             color: #ffffff;
             border: none;
             border-radius: 10px;
@@ -380,20 +477,20 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 14px rgba(77, 184, 255, 0.3);
+            box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
             font-family: inherit;
             letter-spacing: 0.5px;
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(77, 184, 255, 0.45);
+            box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.45);
             filter: brightness(1.08);
         }
 
         .submit-btn:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(77, 184, 255, 0.35);
+            box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.35);
         }
 
         .submit-btn svg {
@@ -402,9 +499,10 @@
 
         .form-tip {
             font-size: 12px;
-            color: #6b7280;
+            color: var(--text-muted);
             margin-top: 12px;
             text-align: right;
+            transition: color 0.35s ease;
         }
 
         /* 响应式设计 */
@@ -437,9 +535,10 @@
                 content: '';
                 width: 24px;
                 height: 2px;
-                background: #4db8ff;
+                background: var(--accent);
                 border-radius: 2px;
                 flex-shrink: 0;
+                transition: background 0.35s ease;
             }
 
             .skill-tags {
@@ -459,6 +558,18 @@
         @media (max-width: 640px) {
             body {
                 padding: 12px;
+            }
+
+            .theme-toggle {
+                top: 12px;
+                right: 12px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .theme-toggle .icon {
+                width: 18px;
+                height: 18px;
             }
 
             .container {
@@ -552,6 +663,14 @@
     </style>
 </head>
 <body>
+    <!-- 主题切换按钮 -->
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换暗/亮色模式">
+        <!-- 暗色模式下显示：月亮图标 -->
+        <svg class="icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <!-- 亮色模式下显示：太阳图标 -->
+        <svg class="icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+
     <div class="container">
         <div class="card">
             <!-- 左右分栏主体 -->
@@ -727,5 +846,26 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const STORAGE_KEY = 'personal-page-theme';
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+
+            // 初始化：优先用本地存储的偏好，其次跟随系统
+            const saved = localStorage.getItem(STORAGE_KEY);
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            const isLight = saved ? saved === 'light' : prefersLight;
+            if (isLight) body.classList.add('light-mode');
+
+            // 点击切换
+            toggle.addEventListener('click', function () {
+                body.classList.toggle('light-mode');
+                const nowLight = body.classList.contains('light-mode');
+                localStorage.setItem(STORAGE_KEY, nowLight ? 'light' : 'dark');
+            });
+        })();
+    </script>
 </body>
 </html>

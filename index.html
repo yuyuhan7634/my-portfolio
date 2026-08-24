@@ -206,6 +206,83 @@
             border-radius: 2px;
         }
 
+        /* 技能进度条 */
+        .skill-progress {
+            margin-top: 36px;
+        }
+
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        .progress-percent {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #23262d;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            position: relative;
+            width: 0;
+            animation: fillBar 1.2s ease-out forwards;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .fill-blue   { background: linear-gradient(90deg, #4db8ff, #007aff); box-shadow: 0 0 12px rgba(77,184,255,0.4); }
+        .fill-green  { background: linear-gradient(90deg, #34d399, #059669); box-shadow: 0 0 12px rgba(52,211,153,0.4); }
+        .fill-purple { background: linear-gradient(90deg, #c084fc, #7c3aed); box-shadow: 0 0 12px rgba(192,132,252,0.4); }
+        .fill-orange { background: linear-gradient(90deg, #fbbf24, #f97316); box-shadow: 0 0 12px rgba(251,191,36,0.4); }
+        .fill-pink   { background: linear-gradient(90deg, #f472b6, #db2777); box-shadow: 0 0 12px rgba(244,114,182,0.4); }
+        .fill-teal   { background: linear-gradient(90deg, #5eead4, #0d9488); box-shadow: 0 0 12px rgba(94,234,212,0.4); }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .profile-main {
@@ -369,6 +446,67 @@
                             <span class="skill-tag">Git</span>
                             <span class="skill-tag">UI/UX 设计</span>
                             <span class="skill-tag">产品思维</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技能熟练度进度条 -->
+            <div class="skill-progress">
+                <div class="section-title">技能熟练度</div>
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">前端开发 (HTML / CSS / JavaScript)</span>
+                            <span class="progress-percent">95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-blue" style="width: 95%; animation-delay: 0.1s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">写作与文档</span>
+                            <span class="progress-percent">90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-orange" style="width: 90%; animation-delay: 0.2s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">Python</span>
+                            <span class="progress-percent">80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-green" style="width: 80%; animation-delay: 0.3s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">后端开发 (Node.js)</span>
+                            <span class="progress-percent">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-teal" style="width: 85%; animation-delay: 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">数据分析</span>
+                            <span class="progress-percent">70%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-pink" style="width: 70%; animation-delay: 0.5s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">UI/UX 设计</span>
+                            <span class="progress-percent">60%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-purple" style="width: 60%; animation-delay: 0.6s;"></div>
                         </div>
                     </div>
                 </div>

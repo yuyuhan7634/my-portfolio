@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>番茄钟计时器</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 48px 40px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 32px;
+    color: #1d1d1f;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-wrap {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin-bottom: 32px;
+  }
+
+  .progress-ring {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+  }
+
+  .progress-ring__circle {
+    transition: stroke-dashoffset 0.3s linear;
+    stroke-linecap: round;
+  }
+
+  .time-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .time-text {
+    font-size: 48px;
+    font-weight: 300;
+    color: #1d1d1f;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+
+  .status-text {
+    font-size: 13px;
+    color: #86868b;
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .option-btn {
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #6e6e73;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .option-btn:hover {
+    border-color: #ff6b4a;
+    color: #ff6b4a;
+  }
+
+  .option-btn.active {
+    background: #ff6b4a;
+    border-color: #ff6b4a;
+    color: #ffffff;
+  }
+
+  .option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-start {
+    background: #ff6b4a;
+    color: #ffffff;
+  }
+
+  .btn-start:hover {
+    background: #ff5530;
+  }
+
+  .btn-pause {
+    background: #f0f0f2;
+    color: #1d1d1f;
+  }
+
+  .btn-pause:hover {
+    background: #e5e5ea;
+  }
+
+  .btn-reset {
+    background: #f0f0f2;
+    color: #1d1d1f;
+  }
+
+  .btn-reset:hover {
+    background: #e5e5ea;
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* 弹窗样式 */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 36px;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+  }
+
+  .modal-text {
+    font-size: 14px;
+    color: #86868b;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .modal-btn {
+    background: #ff6b4a;
+    color: #ffffff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .modal-btn:hover {
+    background: #ff5530;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes popIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>番茄钟计时器</h1>
+
+    <div class="timer-wrap">
+      <svg class="progress-ring" viewBox="0 0 260 260">
+        <circle
+          class="progress-ring__circle"
+          cx="130"
+          cy="130"
+          r="120"
+          fill="none"
+          stroke="#f0f0f2"
+          stroke-width="8"
+        />
+        <circle
+          class="progress-ring__circle progress-ring__fill"
+          id="progressCircle"
+          cx="130"
+          cy="130"
+          r="120"
+          fill="none"
+          stroke="#ff6b4a"
+          stroke-width="8"
+        />
+      </svg>
+      <div class="time-display">
+        <div class="time-text" id="timeText">25:00</div>
+        <div class="status-text" id="statusText">准备开始</div>
+      </div>
+    </div>
+
+    <div class="options" id="options">
+      <button class="option-btn" data-minutes="5">5 分钟</button>
+      <button class="option-btn" data-minutes="15">15 分钟</button>
+      <button class="option-btn active" data-minutes="25">25 分钟</button>
+      <button class="option-btn" data-minutes="45">45 分钟</button>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-start" id="startBtn">开始</button>
+      <button class="btn btn-pause" id="pauseBtn" disabled>暂停</button>
+      <button class="btn btn-reset" id="resetBtn">重置</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-icon">🍅</div>
+      <div class="modal-title">休息一下！</div>
+      <div class="modal-text">番茄时间结束，请放松休息片刻，再开始下一段专注。</div>
+      <button class="modal-btn" id="modalBtn">知道了</button>
+    </div>
+  </div>
+
+<script>
+  const RADIUS = 120;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+  const progressCircle = document.getElementById('progressCircle');
+  const timeText = document.getElementById('timeText');
+  const statusText = document.getElementById('statusText');
+  const startBtn = document.getElementById('startBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const optionsContainer = document.getElementById('options');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalBtn = document.getElementById('modalBtn');
+
+  progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+  progressCircle.style.strokeDashoffset = 0;
+
+  let totalSeconds = 25 * 60;
+  let remainingSeconds = totalSeconds;
+  let timerId = null;
+  let isRunning = false;
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    timeText.textContent = formatTime(remainingSeconds);
+    const progress = totalSeconds === 0 ? 0 : remainingSeconds / totalSeconds;
+    progressCircle.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+  }
+
+  function setStatus(text) {
+    statusText.textContent = text;
+  }
+
+  function setOptionsDisabled(disabled) {
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    buttons.forEach(btn => { btn.disabled = disabled; });
+  }
+
+  function tick() {
+    if (remainingSeconds > 0) {
+      remainingSeconds--;
+      updateDisplay();
+    } else {
+      finish();
+    }
+  }
+
+  function start() {
+    if (isRunning) return;
+    isRunning = true;
+    startBtn.disabled = true;
+    pauseBtn.disabled = false;
+    setOptionsDisabled(true);
+    setStatus('专注中...');
+    timerId = setInterval(tick, 1000);
+  }
+
+  function pause() {
+    if (!isRunning) return;
+    isRunning = false;
+    clearInterval(timerId);
+    timerId = null;
+    startBtn.disabled = false;
+    startBtn.textContent = '继续';
+    setStatus('已暂停');
+  }
+
+  function reset() {
+    clearInterval(timerId);
+    timerId = null;
+    isRunning = false;
+    remainingSeconds = totalSeconds;
+    startBtn.disabled = false;
+    startBtn.textContent = '开始';
+    pauseBtn.disabled = true;
+    setOptionsDisabled(false);
+    setStatus('准备开始');
+    updateDisplay();
+  }
+
+  function finish() {
+    clearInterval(timerId);
+    timerId = null;
+    isRunning = false;
+    remainingSeconds = 0;
+    updateDisplay();
+    startBtn.disabled = false;
+    startBtn.textContent = '开始';
+    pauseBtn.disabled = true;
+    setOptionsDisabled(false);
+    setStatus('已完成');
+    showModal();
+  }
+
+  function showModal() {
+    modalOverlay.classList.add('show');
+    // 尝试播放提示音（部分浏览器需要用户交互后才能播放）
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.frequency.value = 880;
+      gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 1);
+    } catch (e) {
+      // 忽略音频播放错误
+    }
+  }
+
+  function hideModal() {
+    modalOverlay.classList.remove('show');
+    reset();
+  }
+
+  function selectOption(minutes) {
+    if (isRunning) return;
+    totalSeconds = minutes * 60;
+    remainingSeconds = totalSeconds;
+    updateDisplay();
+    setStatus('准备开始');
+    startBtn.textContent = '开始';
+  }
+
+  startBtn.addEventListener('click', start);
+  pauseBtn.addEventListener('click', pause);
+  resetBtn.addEventListener('click', reset);
+  modalBtn.addEventListener('click', hideModal);
+
+  optionsContainer.addEventListener('click', (e) => {
+    const btn = e.target.closest('.option-btn');
+    if (!btn || btn.disabled) return;
+    optionsContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectOption(parseInt(btn.dataset.minutes, 10));
+  });
+
+  // 初始化
+  updateDisplay();
+</script>
+</body>
+</html>

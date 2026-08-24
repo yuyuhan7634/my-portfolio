@@ -260,6 +260,80 @@
     line-height: 1.6;
   }
 
+  /* ====== 用户评价 ====== */
+  .testimonials-wrap {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    padding: 80px 20px;
+  }
+  .testimonials {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+  }
+  .testimonial-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px 28px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .testimonial-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(99,102,241,0.12);
+    border-color: transparent;
+  }
+  .testimonial-quote {
+    position: absolute;
+    top: 18px; right: 24px;
+    font-size: 60px;
+    line-height: 1;
+    color: #e5e7eb;
+    font-family: Georgia, serif;
+    user-select: none;
+  }
+  .testimonial-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .testimonial-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .testimonial-info .name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .testimonial-info .role {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  .testimonial-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 14px;
+  }
+  .testimonial-stars svg {
+    width: 18px; height: 18px;
+    fill: #fbbf24;
+  }
+  .testimonial-text {
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.75;
+  }
+
   /* ====== 定价 ====== */
   .pricing-wrap {
     background: #f9fafb;
@@ -460,6 +534,72 @@
         </div>
         <h3 class="feature-title">多语言翻译</h3>
         <p class="feature-desc">支持 30+ 语种互译，地道表达，打破语言的边界。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====== 用户评价 ====== -->
+  <section class="testimonials-wrap">
+    <h2 class="section-title">用户怎么说</h2>
+    <p class="section-sub">来自真实创作者的反馈</p>
+    <div class="testimonials">
+
+      <div class="testimonial-card">
+        <span class="testimonial-quote">"</span>
+        <div class="testimonial-user">
+          <div class="testimonial-avatar" style="background: linear-gradient(135deg, #818cf8, #6366f1);">林</div>
+          <div class="testimonial-info">
+            <div class="name">林晓雯</div>
+            <div class="role">新媒体运营</div>
+          </div>
+        </div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <p class="testimonial-text">智能续写真的救了我，每天 10 篇推文的灵感再也不卡壳了，文风也很自然，不像机器写的。</p>
+      </div>
+
+      <div class="testimonial-card">
+        <span class="testimonial-quote">"</span>
+        <div class="testimonial-user">
+          <div class="testimonial-avatar" style="background: linear-gradient(135deg, #c084fc, #a855f7);">陈</div>
+          <div class="testimonial-info">
+            <div class="name">陈志远</div>
+            <div class="role">自由撰稿人</div>
+          </div>
+        </div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <p class="testimonial-text">风格改写功能太实用了，同一篇文章能瞬间切换正式和轻松两种调性，对接不同客户省心很多。</p>
+      </div>
+
+      <div class="testimonial-card">
+        <span class="testimonial-quote">"</span>
+        <div class="testimonial-user">
+          <div class="testimonial-avatar" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);">王</div>
+          <div class="testimonial-info">
+            <div class="name">王雅婷</div>
+            <div class="role">跨境电商卖家</div>
+          </div>
+        </div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <p class="testimonial-text">多语言翻译比想象中地道，英、日、德三站产品描述一次搞定，再也不用逐字查词典了。</p>
       </div>
 
     </div>

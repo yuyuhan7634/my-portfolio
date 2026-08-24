@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.35s ease, color 0.35s ease;
+        }
+
+        /* 暗/亮色主题变量 */
+        :root {
+            --bg-body: #0f1115;
+            --bg-card: #1a1d24;
+            --bg-elevated: #23262d;
+            --bg-input: #1a1d24;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-title: #f3f4f6;
+            --text-placeholder: #6b7280;
+            --accent: #4db8ff;
+            --accent-rgb: 77, 184, 255;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --card-hover-shadow: 0 8px 32px rgba(77, 184, 255, 0.18);
+            --card-border: rgba(77, 184, 255, 0.15);
+            --input-border: rgba(77, 184, 255, 0.18);
+        }
+
+        body.light-mode {
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-elevated: #f9fafb;
+            --bg-input: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-title: #111827;
+            --text-placeholder: #9ca3af;
+            --accent: #007aff;
+            --accent-rgb: 0, 122, 255;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: 0 8px 32px rgba(0, 122, 255, 0.15);
+            --card-border: rgba(0, 122, 255, 0.12);
+            --input-border: rgba(0, 122, 255, 0.18);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 999;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--card-border);
+            background: var(--bg-card);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.3);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle .icon {
+            width: 22px;
+            height: 22px;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+
+        .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        body.light-mode .theme-toggle .icon-sun {
+            display: inline-flex;
+        }
+
+        body.light-mode .theme-toggle .icon-moon {
+            display: none;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 48px 40px;
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.35s ease, border-color 0.35s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .profile-main {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+        }
+
+        .profile-left {
+            flex: 0 0 auto;
+            width: 220px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 8px;
+        }
+
+        .profile-right {
+            flex: 1 1 auto;
+            min-width: 0;
+            text-align: left;
+        }
+
+        .avatar {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #007aff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 60px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.35);
+            border: 3px solid var(--accent);
+            outline: 1px solid rgba(var(--accent-rgb), 0.4);
+            outline-offset: 4px;
+            transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, outline-color 0.35s ease;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            transition: color 0.35s ease;
+        }
+
+        .title {
+            font-size: 15px;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0;
+            transition: color 0.35s ease;
+        }
+
+        .bio {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 32px;
+            text-align: left;
+            transition: color 0.35s ease;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-title);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            text-align: left;
+            transition: color 0.35s ease;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+            flex-shrink: 0;
+            transition: background 0.35s ease;
+        }
+
+        .section-title::after {
+            content: none;
+        }
+
+        .skills {
+            margin-bottom: 0;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            padding: 8px 20px;
+            background: rgba(var(--accent-rgb), 0.1);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(var(--accent-rgb), 0.2);
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .skill-tag:hover {
+            background: var(--accent);
+            color: var(--bg-body);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
+        }
+
+        .contact {
+            margin-bottom: 8px;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(var(--accent-rgb), 0.08);
+        }
+
+        .contact-item:hover {
+            background: rgba(var(--accent-rgb), 0.12);
+            border-color: rgba(var(--accent-rgb), 0.3);
+            color: var(--accent);
+        }
+
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, #007aff 100%);
+            margin: 40px 0 32px 0;
+            border-radius: 2px;
+            transition: background 0.35s ease;
+        }
+
+        /* 技能进度条 */
+        .skill-progress {
+            margin-top: 36px;
+        }
+
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: color 0.35s ease;
+        }
+
+        .progress-percent {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            transition: color 0.35s ease;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.35s ease;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            position: relative;
+            width: 0;
+            animation: fillBar 1.2s ease-out forwards;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .fill-blue   { background: linear-gradient(90deg, var(--accent), #007aff); box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.4); }
+        .fill-green  { background: linear-gradient(90deg, #34d399, #059669); box-shadow: 0 0 12px rgba(52,211,153,0.4); }
+        .fill-purple { background: linear-gradient(90deg, #c084fc, #7c3aed); box-shadow: 0 0 12px rgba(192,132,252,0.4); }
+        .fill-orange { background: linear-gradient(90deg, #fbbf24, #f97316); box-shadow: 0 0 12px rgba(251,191,36,0.4); }
+        .fill-pink   { background: linear-gradient(90deg, #f472b6, #db2777); box-shadow: 0 0 12px rgba(244,114,182,0.4); }
+        .fill-teal   { background: linear-gradient(90deg, #5eead4, #0d9488); box-shadow: 0 0 12px rgba(94,234,212,0.4); }
+
+        /* 留言表单 */
+        .message-form {
+            margin-top: 0;
+        }
+
+        .form-wrapper {
+            background: var(--bg-elevated);
+            border: 1px solid rgba(var(--accent-rgb), 0.12);
+            border-radius: 12px;
+            padding: 28px;
+            margin-top: 4px;
+            transition: background 0.35s ease, border-color 0.35s ease;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.35s ease;
+        }
+
+        .form-label .required {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(var(--accent-rgb), 0.35);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+            background: var(--bg-elevated);
+        }
+
+        .form-input {
+            min-height: 44px;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--accent) 0%, #007aff 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.45);
+            filter: brightness(1.08);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.35);
+        }
+
+        .submit-btn svg {
+            flex-shrink: 0;
+        }
+
+        .form-tip {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-align: right;
+            transition: color 0.35s ease;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .profile-main {
+                flex-direction: column;
+                gap: 32px;
+                align-items: center;
+            }
+
+            .profile-left {
+                width: 100%;
+            }
+
+            .profile-right {
+                width: 100%;
+                text-align: center;
+            }
+
+            .bio {
+                text-align: center;
+            }
+
+            .section-title {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .section-title::after {
+                content: '';
+                width: 24px;
+                height: 2px;
+                background: var(--accent);
+                border-radius: 2px;
+                flex-shrink: 0;
+                transition: background 0.35s ease;
+            }
+
+            .skill-tags {
+                justify-content: center;
+            }
+
+            .contact-list {
+                justify-content: center;
+            }
+
+            .divider {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .theme-toggle {
+                top: 12px;
+                right: 12px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .theme-toggle .icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .container {
+                padding: 20px 0;
+            }
+
+            .card {
+                padding: 32px 20px;
+                border-radius: 12px;
+            }
+
+            .avatar {
+                width: 110px;
+                height: 110px;
+                font-size: 44px;
+                margin-bottom: 20px;
+            }
+
+            .name {
+                font-size: 26px;
+            }
+
+            .title {
+                font-size: 14px;
+                margin-bottom: 0;
+            }
+
+            .bio {
+                font-size: 14px;
+                margin-bottom: 28px;
+                padding: 0 4px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .skill-tag {
+                padding: 6px 16px;
+                font-size: 13px;
+            }
+
+            .skill-tags {
+                gap: 8px;
+            }
+
+            .contact-list {
+                gap: 10px;
+            }
+
+            .contact-item {
+                padding: 10px 14px;
+                font-size: 13px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-wrapper {
+                padding: 20px;
+            }
+
+            .form-footer {
+                justify-content: center;
+            }
+
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-tip {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 28px 16px;
+            }
+
+            .name {
+                font-size: 22px;
+            }
+
+            .avatar {
+                width: 96px;
+                height: 96px;
+                font-size: 38px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换暗/亮色模式">
+        <!-- 暗色模式下显示：月亮图标 -->
+        <svg class="icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <!-- 亮色模式下显示：太阳图标 -->
+        <svg class="icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+
+    <div class="container">
+        <div class="card">
+            <!-- 左右分栏主体 -->
+            <div class="profile-main">
+                <!-- 左栏：头像 + 姓名 -->
+                <div class="profile-left">
+                    <div class="avatar">张</div>
+                    <h1 class="name">张三</h1>
+                    <p class="title">全栈开发工程师</p>
+                </div>
+
+                <!-- 右栏：简介 + 技能标签 -->
+                <div class="profile-right">
+                    <!-- 个人简介 -->
+                    <p class="bio">
+                        热爱技术与设计，拥有 5 年 Web 开发经验。专注于构建简洁、高效、用户友好的产品。
+                        喜欢探索新技术，追求代码的优雅与性能的极致。业余时间热爱阅读、摄影与户外运动。
+                    </p>
+
+                    <!-- 技能标签 -->
+                    <div class="skills">
+                        <div class="section-title">专业技能</div>
+                        <div class="skill-tags">
+                            <span class="skill-tag">HTML5</span>
+                            <span class="skill-tag">CSS3</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">Vue.js</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">MySQL</span>
+                            <span class="skill-tag">Git</span>
+                            <span class="skill-tag">UI/UX 设计</span>
+                            <span class="skill-tag">产品思维</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技能熟练度进度条 -->
+            <div class="skill-progress">
+                <div class="section-title">技能熟练度</div>
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">前端开发 (HTML / CSS / JavaScript)</span>
+                            <span class="progress-percent">95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-blue" style="width: 95%; animation-delay: 0.1s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">写作与文档</span>
+                            <span class="progress-percent">90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-orange" style="width: 90%; animation-delay: 0.2s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">Python</span>
+                            <span class="progress-percent">80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-green" style="width: 80%; animation-delay: 0.3s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">后端开发 (Node.js)</span>
+                            <span class="progress-percent">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-teal" style="width: 85%; animation-delay: 0.4s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">数据分析</span>
+                            <span class="progress-percent">70%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-pink" style="width: 70%; animation-delay: 0.5s;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">UI/UX 设计</span>
+                            <span class="progress-percent">60%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill fill-purple" style="width: 60%; animation-delay: 0.6s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分隔线 -->
+            <div class="divider"></div>
+
+            <!-- 联系方式 -->
+            <div class="contact">
+                <div class="section-title">联系我</div>
+                <div class="contact-list">
+                    <a href="mailto:zhangsan@example.com" class="contact-item">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </span>
+                        zhangsan@example.com
+                    </a>
+                    <a href="tel:+8613800138000" class="contact-item">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </span>
+                        138-0013-8000
+                    </a>
+                    <a href="#" class="contact-item">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        </span>
+                        GitHub
+                    </a>
+                    <a href="#" class="contact-item">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </span>
+                        LinkedIn
+                    </a>
+                    <a href="#" class="contact-item">
+                        <span class="contact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </span>
+                        北京市 · 海淀区
+                    </a>
+                </div>
+            </div>
+
+            <!-- 分隔线 -->
+            <div class="divider"></div>
+
+            <!-- 给我留言表单 -->
+            <div class="message-form">
+                <div class="section-title">给我留言</div>
+                <form class="form-wrapper" onsubmit="event.preventDefault(); alert('留言已提交，感谢您的反馈！'); this.reset();">
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            姓名
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="请输入您的姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            消息内容
+                            <span class="required">*</span>
+                        </label>
+                        <textarea id="message" name="message" class="form-textarea" placeholder="请留言，我会尽快回复您……" rows="5" required></textarea>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="submit-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            提交留言
+                        </button>
+                    </div>
+                    <p class="form-tip">* 您的信息仅用于本次留言回复，不会对外公开</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const STORAGE_KEY = 'personal-page-theme';
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+
+            // 初始化：优先用本地存储的偏好，其次跟随系统
+            const saved = localStorage.getItem(STORAGE_KEY);
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            const isLight = saved ? saved === 'light' : prefersLight;
+            if (isLight) body.classList.add('light-mode');
+
+            // 点击切换
+            toggle.addEventListener('click', function () {
+                body.classList.toggle('light-mode');
+                const nowLight = body.classList.contains('light-mode');
+                localStorage.setItem(STORAGE_KEY, nowLight ? 'light' : 'dark');
+            });
+        })();
+    </script>
+</body>
+</html>

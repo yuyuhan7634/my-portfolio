@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计算器</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  body {
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .calculator {
+    width: 100%;
+    max-width: 320px;
+    background: #000;
+    border-radius: 28px;
+    overflow: hidden;
+    padding: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .display {
+    color: #fff;
+    text-align: right;
+    padding: 20px 18px 30px;
+    font-weight: 300;
+    overflow: hidden;
+  }
+
+  .display .expression {
+    font-size: 22px;
+    color: rgba(255,255,255,0.55);
+    min-height: 28px;
+    line-height: 28px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .display .result {
+    font-size: 64px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  button {
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    height: 68px;
+    font-size: 30px;
+    font-weight: 400;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.08s ease, background-color 0.08s ease, transform 0.05s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button:active {
+    opacity: 0.65;
+    transform: scale(0.94);
+  }
+
+  .btn-num {
+    background: #333333;
+  }
+  .btn-num:active {
+    background: #5a5a5a;
+  }
+
+  .btn-op {
+    background: #ff9f0a;
+    color: #fff;
+  }
+  .btn-op:active {
+    background: #ffb845;
+  }
+  .btn-op.active {
+    background: #fff;
+    color: #ff9f0a;
+  }
+
+  .btn-fn {
+    background: #a5a5a5;
+    color: #000;
+  }
+  .btn-fn:active {
+    background: #c9c9c9;
+  }
+
+  .btn-zero {
+    grid-column: span 2;
+    border-radius: 34px;
+    justify-content: flex-start;
+    padding-left: 26px;
+  }
+
+  .back-bar {
+    margin-top: 14px;
+    display: flex;
+  }
+  .back-bar button {
+    width: 100%;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 18px;
+    background: #1c1c1e;
+    color: #ff9f0a;
+    border: 1px solid rgba(255,159,10,0.35);
+    transition: background-color 0.08s ease, transform 0.05s ease;
+  }
+  .back-bar button:active {
+    background: #2c2c2e;
+    transform: scale(0.98);
+  }
+</style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">
+      <div class="expression" id="expression">&nbsp;</div>
+      <div class="result" id="result">0</div>
+    </div>
+    <div class="buttons">
+      <button class="btn-fn" data-action="clear">C</button>
+      <button class="btn-fn" data-action="sign">±</button>
+      <button class="btn-fn" data-action="percent">%</button>
+      <button class="btn-op" data-op="/">÷</button>
+
+      <button class="btn-num" data-num="7">7</button>
+      <button class="btn-num" data-num="8">8</button>
+      <button class="btn-num" data-num="9">9</button>
+      <button class="btn-op" data-op="*">×</button>
+
+      <button class="btn-num" data-num="4">4</button>
+      <button class="btn-num" data-num="5">5</button>
+      <button class="btn-num" data-num="6">6</button>
+      <button class="btn-op" data-op="-">−</button>
+
+      <button class="btn-num" data-num="1">1</button>
+      <button class="btn-num" data-num="2">2</button>
+      <button class="btn-num" data-num="3">3</button>
+      <button class="btn-op" data-op="+">+</button>
+
+      <button class="btn-num btn-zero" data-num="0">0</button>
+      <button class="btn-num" data-action="dot">.</button>
+      <button class="btn-op" data-action="equals">=</button>
+    </div>
+    <div class="back-bar">
+      <button data-action="back">⌫ 退格</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const resultEl = document.getElementById('result');
+  const exprEl = document.getElementById('expression');
+  const opButtons = document.querySelectorAll('.btn-op[data-op]');
+
+  const state = {
+    current: '0',     // 当前正在输入的数字（字符串）
+    previous: null,   // 上一个操作数（数字）
+    op: null,         // 待执行的运算符
+    justEvaluated: false // 是否刚完成等号计算
+  };
+
+  const opSymbol = { '+': '+', '-': '−', '*': '×', '/': '÷' };
+
+  function formatNumber(n) {
+    if (n === null || n === undefined || isNaN(n)) return 'Error';
+    // 限制长度，避免过长
+    if (!isFinite(n)) return 'Error';
+    let s;
+    if (Number.isInteger(n)) {
+      s = String(n);
+    } else {
+      // 最多保留 10 位小数，去掉尾随 0
+      s = parseFloat(n.toFixed(10)).toString();
+    }
+    return s;
+  }
+
+  function updateDisplay() {
+    resultEl.textContent = state.current;
+    if (state.op && state.previous !== null) {
+      exprEl.textContent = formatNumber(state.previous) + ' ' + opSymbol[state.op];
+    } else {
+      exprEl.innerHTML = '&nbsp;';
+    }
+    // 高亮当前运算符
+    opButtons.forEach(b => {
+      b.classList.toggle('active',
+        state.op === b.dataset.op && state.justEvaluated === false);
+    });
+  }
+
+  function inputDigit(d) {
+    if (state.justEvaluated) {
+      state.current = d;
+      state.previous = null;
+      state.op = null;
+      state.justEvaluated = false;
+      return;
+    }
+    if (state.current === '0') {
+      state.current = d;
+    } else {
+      if (state.current.replace('-','').replace('.','').length >= 12) return;
+      state.current += d;
+    }
+  }
+
+  function inputDot() {
+    if (state.justEvaluated) {
+      state.current = '0.';
+      state.previous = null;
+      state.op = null;
+      state.justEvaluated = false;
+      return;
+    }
+    if (!state.current.includes('.')) {
+      state.current += '.';
+    }
+  }
+
+  function compute(a, b, op) {
+    switch (op) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/':
+        if (b === 0) return NaN;
+        return a / b;
+      default: return b;
+    }
+  }
+
+  function chooseOp(op) {
+    const cur = parseFloat(state.current);
+    if (state.previous !== null && state.op && !state.justEvaluated) {
+      // 连续运算：先用之前的 op 计算
+      const r = compute(state.previous, cur, state.op);
+      state.previous = r;
+      state.current = formatNumber(r);
+    } else {
+      state.previous = cur;
+    }
+    state.op = op;
+    state.justEvaluated = false;
+    // 重置当前输入，等待新数字（但显示保留当前结果）
+    state._awaitNextDigit = true;
+  }
+
+  function equals() {
+    if (state.op === null || state.previous === null) return;
+    const cur = parseFloat(state.current);
+    const r = compute(state.previous, cur, state.op);
+    state.current = formatNumber(r);
+    state.previous = null;
+    state.op = null;
+    state.justEvaluated = true;
+    state._awaitNextDigit = false;
+  }
+
+  function clearAll() {
+    state.current = '0';
+    state.previous = null;
+    state.op = null;
+    state.justEvaluated = false;
+    state._awaitNextDigit = false;
+  }
+
+  function toggleSign() {
+    if (state.current === '0') return;
+    if (state.current.startsWith('-')) {
+      state.current = state.current.slice(1);
+    } else {
+      state.current = '-' + state.current;
+    }
+  }
+
+  function percent() {
+    const v = parseFloat(state.current) / 100;
+    state.current = formatNumber(v);
+  }
+
+  function backspace() {
+    if (state.justEvaluated) {
+      clearAll();
+      return;
+    }
+    if (state.current.length <= 1 || (state.current.length === 2 && state.current.startsWith('-'))) {
+      state.current = '0';
+    } else {
+      state.current = state.current.slice(0, -1);
+    }
+  }
+
+  // 统一处理：点击数字按钮前，若在等待新数字，则重置 current
+  function beforeDigitInput() {
+    if (state._awaitNextDigit) {
+      state.current = '0';
+      state._awaitNextDigit = false;
+    }
+  }
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.num !== undefined) {
+        beforeDigitInput();
+        inputDigit(btn.dataset.num);
+      } else if (btn.dataset.op !== undefined) {
+        chooseOp(btn.dataset.op);
+      } else {
+        const a = btn.dataset.action;
+        switch (a) {
+          case 'clear': clearAll(); break;
+          case 'sign': toggleSign(); break;
+          case 'percent': percent(); break;
+          case 'dot':
+            beforeDigitInput();
+            inputDot(); break;
+          case 'equals': equals(); break;
+          case 'back': backspace(); break;
+        }
+      }
+      updateDisplay();
+    });
+  });
+
+  // 键盘支持
+  document.addEventListener('keydown', (e) => {
+    const k = e.key;
+    let handled = true;
+    if (/[0-9]/.test(k)) {
+      beforeDigitInput();
+      inputDigit(k);
+    } else if (k === '.') {
+      beforeDigitInput();
+      inputDot();
+    } else if (['+','-','*','/'].includes(k)) {
+      chooseOp(k);
+    } else if (k === 'Enter' || k === '=') {
+      e.preventDefault();
+      equals();
+    } else if (k === 'Backspace') {
+      backspace();
+    } else if (k === 'Escape' || k === 'c' || k === 'C') {
+      clearAll();
+    } else if (k === '%') {
+      percent();
+    } else {
+      handled = false;
+    }
+    if (handled) {
+      e.preventDefault();
+      updateDisplay();
+    }
+  });
+
+  updateDisplay();
+})();
+</script>
+
+</body>
+</html>

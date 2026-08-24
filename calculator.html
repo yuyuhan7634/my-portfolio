@@ -409,7 +409,21 @@
   }
 
   function percent() {
-    const v = parseFloat(state.current) / 100;
+    const cur = parseFloat(state.current);
+    let v;
+    if (state.previous !== null && state.op && !state.justEvaluated) {
+      // 上下文模式（iPhone 风格）
+      if (state.op === '+' || state.op === '-') {
+        // 加减法：百分比基于前一个操作数
+        v = state.previous * cur / 100;
+      } else {
+        // 乘除法：当前数除以 100
+        v = cur / 100;
+      }
+    } else {
+      // 独立使用：当前数除以 100
+      v = cur / 100;
+    }
     state.current = formatNumber(v);
   }
 

@@ -18,6 +18,7 @@
     background: #000;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -32,6 +33,72 @@
     overflow: hidden;
     padding: 18px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .history {
+    width: 100%;
+    max-width: 320px;
+    margin-top: 18px;
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: 14px 16px;
+    color: #fff;
+  }
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+  }
+  .history-clear {
+    background: none;
+    border: none;
+    color: #ff9f0a;
+    font-size: 13px;
+    cursor: pointer;
+    height: auto;
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+  .history-clear:active {
+    opacity: 0.6;
+    transform: none;
+  }
+  .history-list {
+    list-style: none;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 15px;
+  }
+  .history-item:first-child {
+    border-top: none;
+  }
+  .history-expr {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+  }
+  .history-result {
+    color: #fff;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .history-empty {
+    color: rgba(255,255,255,0.3);
+    font-size: 14px;
+    text-align: center;
+    padding: 12px 0;
   }
 
   .display {
@@ -176,17 +243,29 @@
     </div>
   </div>
 
+  <div class="history">
+    <div class="history-header">
+      <span>历史记录</span>
+      <button class="history-clear" id="historyClear">清除</button>
+    </div>
+    <ul class="history-list" id="historyList">
+      <li class="history-empty">暂无记录</li>
+    </ul>
+  </div>
+
 <script>
 (function () {
   const resultEl = document.getElementById('result');
   const exprEl = document.getElementById('expression');
   const opButtons = document.querySelectorAll('.btn-op[data-op]');
+  const historyListEl = document.getElementById('historyList');
 
   const state = {
     current: '0',     // 当前正在输入的数字（字符串）
     previous: null,   // 上一个操作数（数字）
     op: null,         // 待执行的运算符
-    justEvaluated: false // 是否刚完成等号计算
+    justEvaluated: false, // 是否刚完成等号计算
+    history: []       // 计算历史，最新在前
   };
 
   const opSymbol = { '+': '+', '-': '−', '*': '×', '/': '÷' };
@@ -280,11 +359,36 @@
     if (state.op === null || state.previous === null) return;
     const cur = parseFloat(state.current);
     const r = compute(state.previous, cur, state.op);
+    // 记录历史：表达式 + 结果
+    const exprText = formatNumber(state.previous) + ' ' + opSymbol[state.op] + ' ' + formatNumber(cur);
+    const resultText = formatNumber(r);
+    state.history.unshift({ expr: exprText, result: resultText });
+    if (state.history.length > 5) state.history.length = 5;
+    renderHistory();
+
     state.current = formatNumber(r);
     state.previous = null;
     state.op = null;
     state.justEvaluated = true;
     state._awaitNextDigit = false;
+  }
+
+  function renderHistory() {
+    if (state.history.length === 0) {
+      historyListEl.innerHTML = '<li class="history-empty">暂无记录</li>';
+      return;
+    }
+    historyListEl.innerHTML = state.history.map(h =>
+      '<li class="history-item">' +
+        '<span class="history-expr">' + h.expr + '</span>' +
+        '<span class="history-result">= ' + h.result + '</span>' +
+      '</li>'
+    ).join('');
+  }
+
+  function clearHistory() {
+    state.history = [];
+    renderHistory();
   }
 
   function clearAll() {
@@ -384,6 +488,9 @@
   });
 
   updateDisplay();
+
+  // 清除历史记录按钮
+  document.getElementById('historyClear').addEventListener('click', clearHistory);
 })();
 </script>
 
